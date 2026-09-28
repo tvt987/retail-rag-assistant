@@ -1,0 +1,10 @@
+[
+  {"question": "Can I return an unopened item with its receipt?", "source": "returns.md"},
+  {"question": "How long does a refund take after inspection?", "source": "returns.md"},
+  {"question": "Are opened hygiene products eligible for return?", "source": "returns.md"},
+  {"question": "How long does standard shipping take in Ho Chi Minh City?", "source": "shipping.md"},
+  {"question": "Can I change my delivery address before carrier handoff?", "source": "shipping.md"},
+  {"question": "How many business days does delivery to another province take?", "source": "shipping.md"},
+  {"question": "What is the laptop warranty?", "source": null},
+  {"question": "Do you offer gift wrapping?", "source": null}
+]
