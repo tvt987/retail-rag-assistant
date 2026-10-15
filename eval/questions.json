@@ -1,10 +1,18 @@
 [
-  {"question": "Can I return an unopened item with its receipt?", "source": "returns.md"},
-  {"question": "How long does a refund take after inspection?", "source": "returns.md"},
-  {"question": "Are opened hygiene products eligible for return?", "source": "returns.md"},
-  {"question": "How long does standard shipping take in Ho Chi Minh City?", "source": "shipping.md"},
-  {"question": "Can I change my delivery address before carrier handoff?", "source": "shipping.md"},
-  {"question": "How many business days does delivery to another province take?", "source": "shipping.md"},
+  {"question": "Can I return an unopened item with its receipt?", "source": "returns.md", "facts": ["14 days"]},
+  {"question": "How long does a refund take after inspection?", "source": "returns.md", "facts": ["5 to 10 business days"]},
+  {"question": "Are opened hygiene products eligible for return?", "source": "returns.md", "facts": ["cannot be returned"]},
+  {"question": "Do I need the original packaging to return an item?", "source": "returns.md", "facts": ["original packaging"]},
+  {"question": "What do I need to report a defective product?", "source": "returns.md", "facts": ["order number", "photos"]},
+  {"question": "How long does standard shipping take in Ho Chi Minh City?", "source": "shipping.md", "facts": ["1 to 3 business days"]},
+  {"question": "Can I change my delivery address before carrier handoff?", "source": "shipping.md", "facts": ["before an order is handed to the carrier"]},
+  {"question": "How many business days does delivery to another province take?", "source": "shipping.md", "facts": ["3 to 7 business days"]},
+  {"question": "Is an address change guaranteed after handoff to the carrier?", "source": "shipping.md", "facts": ["cannot be guaranteed"]},
+  {"question": "How long will the store hold my pickup order?", "source": "store_pickup.html", "facts": ["3 days"]},
+  {"question": "What should I bring to collect my order in store?", "source": "store_pickup.html", "facts": ["order code", "photo ID"]},
+  {"question": "How soon is a store pickup order ready?", "source": "store_pickup.html", "facts": ["2 hours"]},
   {"question": "What is the laptop warranty?", "source": null},
-  {"question": "Do you offer gift wrapping?", "source": null}
+  {"question": "Do you offer gift wrapping?", "source": null},
+  {"question": "Do you price match competitors?", "source": null},
+  {"question": "Can I pay with cryptocurrency?", "source": null}
 ]

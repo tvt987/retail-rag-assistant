@@ -1,7 +1,10 @@
 FROM python:3.12-slim
 WORKDIR /app
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# EXTRAS=true adds Qdrant, LangChain and PDF support (requirements-extras.txt).
+ARG EXTRAS=false
+COPY requirements.txt requirements-extras.txt ./
+RUN pip install --no-cache-dir -r requirements.txt \
+ && if [ "$EXTRAS" = "true" ]; then pip install --no-cache-dir -r requirements-extras.txt; fi
 COPY app/ app/
 COPY data/ data/
 ENV PYTHONUNBUFFERED=1

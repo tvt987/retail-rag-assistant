@@ -7,12 +7,33 @@ from fastapi import FastAPI
 from pydantic import BaseModel, Field
 
 from .core import SearchIndex, SemanticIndex, extractive_answer
+from .ingest import IngestReport, load_documents
 
 DATA = Path(__file__).resolve().parents[1] / "data"
-documents_data = {p.name: p.read_text(encoding="utf-8") for p in DATA.glob("*.md")}
+ingest_report = IngestReport()
+documents_data = load_documents(DATA, ingest_report)
 embedding_model = os.getenv("EMBEDDING_MODEL")
-index = SemanticIndex(documents_data, embedding_model) if embedding_model else SearchIndex(documents_data)
-app = FastAPI(title="Retail RAG Assistant", version="1.0.0")
+vector_store = os.getenv("VECTOR_STORE", "memory")
+pipeline = os.getenv("RAG_PIPELINE", "default")
+
+
+def build_index(documents: dict[str, str]) -> SearchIndex:
+    if vector_store == "qdrant":
+        from .vectorstore import QdrantIndex
+        return QdrantIndex(documents, path=os.getenv("QDRANT_PATH", ":memory:"),
+                           url=os.getenv("QDRANT_URL") or None, model_name=embedding_model)
+    return SemanticIndex(documents, embedding_model) if embedding_model else SearchIndex(documents)
+
+
+index = build_index(documents_data)
+retrieval_backend = getattr(index, "backend", "semantic" if embedding_model else "tfidf")
+
+langchain_llm = None
+if pipeline == "langchain":
+    from .langchain_rag import IndexRetriever, build_chain, default_llm
+    langchain_llm = default_llm()
+
+app = FastAPI(title="Retail RAG Assistant", version="1.1.0")
 
 
 class Question(BaseModel):
@@ -43,7 +64,8 @@ def generate(question: str, passages: list) -> tuple[str, str]:
 
 @app.get("/health")
 def health():
-    return {"status": "ok", "chunks": len(index.chunks), "retrieval": "semantic" if embedding_model else "tfidf"}
+    return {"status": "ok", "chunks": len(index.chunks), "retrieval": retrieval_backend,
+            "pipeline": pipeline, "documents_skipped": ingest_report.skipped}
 
 
 @app.get("/documents")
@@ -53,6 +75,11 @@ def documents():
 
 @app.post("/ask")
 def ask(body: Question):
+    if pipeline == "langchain":
+        # Composing the chain is cheap; building it per request honours top_k.
+        chain = build_chain(IndexRetriever(index=index, top_k=body.top_k), langchain_llm)
+        out = chain.invoke({"question": body.question})
+        return {"answer": out["answer"], "sources": [p.__dict__ for p in out["sources"]], "mode": out["mode"]}
     passages = index.search(body.question, top_k=body.top_k)
     answer, mode = generate(body.question, passages)
     return {"answer": answer, "sources": [p.__dict__ for p in passages], "mode": mode}

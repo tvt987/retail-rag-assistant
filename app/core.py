@@ -65,7 +65,8 @@ class SearchIndex:
 
     @classmethod
     def from_directory(cls, directory: Path) -> "SearchIndex":
-        return cls({p.name: p.read_text(encoding="utf-8") for p in directory.glob("*.md")})
+        from .ingest import load_documents
+        return cls(load_documents(directory))
 
     def _vector(self, count: Counter) -> dict[str, float]:
         weighted = {word: (1 + log(freq)) * self.idf[word]
